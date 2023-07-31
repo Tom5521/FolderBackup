@@ -1,3 +1,3 @@
 #!/bin/bash
-
-go build -o vscodeback .
+cd src
+go build -o ../vscodeback .
