@@ -1,5 +1,5 @@
 @echo off
-copy bin\linux\* .
+copy bin\windows\* .
 echo Compiling...
 call build.sh
 echo Compiled!
