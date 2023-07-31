@@ -1,3 +1,4 @@
 @echo off
-go build -o vscodeback.exe .
+cd src
+go build -o ..\vscodeback.exe .
 pause
