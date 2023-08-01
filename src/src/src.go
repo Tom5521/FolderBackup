@@ -16,7 +16,7 @@ type Sh struct {
 	Stderr   bool
 }
 
-func (sh Sh) getprefix() []string {
+func (sh Sh) Getprefix() []string {
 	prefix := make([]string, 2)
 	if runtime.GOOS == "windows" {
 		prefix[0] = "cmd"
@@ -30,7 +30,7 @@ func (sh Sh) getprefix() []string {
 }
 
 func (sh Sh) Cmd(input string) error {
-	prefix := sh.getprefix()
+	prefix := sh.Getprefix()
 	cmd := exec.Command(prefix[0], prefix[1], input)
 	if sh.CustomSt {
 		if sh.Stderr {
@@ -52,7 +52,7 @@ func (sh Sh) Cmd(input string) error {
 }
 
 func (sh Sh) Out(input string) (string, error) {
-	prefix := sh.getprefix()
+	prefix := sh.Getprefix()
 	cmd := exec.Command(prefix[0], prefix[1], input)
 	out, err := cmd.Output()
 	return string(out), err
@@ -84,6 +84,7 @@ func CheckRclone() bool {
 type yamlfile struct {
 	VscodeFolder string `yaml:"vscode-folder"`
 	BackupFolder string `yaml:"backup-folder"`
+	Remotefolder string `yaml:"remote-folder"`
 }
 
 var ConfigData = getYamldata()
@@ -106,19 +107,20 @@ func NewJsonFile() {
 	file.WriteString(string(data))
 }
 
-func Rclone(par ...string) {
-	if ConfigData.BackupFolder == "" || ConfigData.VscodeFolder == "" {
-		fmt.Println("Rclone backupfolder or vscode folder is <null>")
+func Rclone() {
+	if !CheckRclone() {
+		fmt.Println("Rclone is not installed")
 		return
 	}
-	if len(par) < 1 {
+	if ConfigData.BackupFolder == "" || ConfigData.VscodeFolder == "" {
+		fmt.Println("Rclone backupfolder or vscode folder is <null>")
 		return
 	}
 	var win, command string
 	if runtime.GOOS == "windows" {
 		win = ".exe"
 	}
-	if par[0] == "save" {
+	if os.Args[1] == "save" {
 		command = fmt.Sprintf(
 			"rclone%v sync %v %v -L -P",
 			win,
@@ -126,13 +128,25 @@ func Rclone(par ...string) {
 			ConfigData.BackupFolder,
 		)
 	}
-	if par[0] == "restore" {
+	if os.Args[1] == "restore" {
 		command = fmt.Sprintf(
 			"rclone%v sync %v %v -L -P",
 			win,
 			ConfigData.BackupFolder,
 			ConfigData.VscodeFolder,
 		)
+	}
+	if os.Args[1] == "download" {
+		if ConfigData.Remotefolder == "" {
+			fmt.Println("Remote dir is <null>")
+		}
+		command = fmt.Sprintf("rclone%v sync %v %v -L -P", win, ConfigData.Remotefolder, ConfigData.BackupFolder)
+	}
+	if os.Args[1] == "upload" {
+		if ConfigData.Remotefolder == "" {
+			fmt.Println("Remote dir is <null>")
+		}
+		command = fmt.Sprintf("rclone%v sync %v %v -L -P", win, ConfigData.BackupFolder, ConfigData.Remotefolder)
 	}
 	sh.Cmd(command)
 }
