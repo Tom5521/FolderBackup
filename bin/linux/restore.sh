@@ -2,4 +2,4 @@
 
 
 echo Restoring...
-./vscodeback restore
+./folderbackup restore

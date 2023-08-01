@@ -1,4 +1,4 @@
 @echo off
 echo Uploading...
-vscodeback.exe upload
+folderbackup.exe upload
 pause

@@ -2,4 +2,4 @@
 
 
 echo saving...
-./vscodeback save
+./folderbackup save

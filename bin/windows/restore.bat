@@ -1,4 +1,4 @@
 @echo off
 echo restoring...
-vscodeback.exe restore
+folderbackup.exe restore
 pause

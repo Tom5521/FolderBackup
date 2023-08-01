@@ -1,4 +1,4 @@
 @echo off
 echo saving...
-vscodeback.exe save
+folderbackup.exe save
 pause
